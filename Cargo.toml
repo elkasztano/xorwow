@@ -1,0 +1,17 @@
+[package]
+name = "xorwow"
+version = "0.1.0"
+edition = "2021"
+authors = ["El Kasztano"]
+description = "simple implementation of the Xorwow algorithm"
+repository = "https://github.com/elkasztano/xorwow"
+license = "MIT"
+keywords = ["xorwow", "pseudorandom", "PRNG"]
+categories = ["algorithms", "mathematics"]
+
+[features]
+serde1 = ["serde"]
+
+[dependencies]
+rand_core = { version = "0.6.4", features = ["getrandom"] }
+serde = { version = "1", features = ["derive"], optional=true }
