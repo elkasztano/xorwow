@@ -3,7 +3,7 @@ name = "xorwow"
 version = "0.1.0"
 edition = "2021"
 authors = ["El Kasztano"]
-description = "simple implementation of the Xorwow algorithm"
+description = "several implementations of the Xorwow algorithm"
 repository = "https://github.com/elkasztano/xorwow"
 license = "MIT"
 keywords = ["xorwow", "pseudorandom", "PRNG"]
@@ -15,3 +15,10 @@ serde1 = ["serde"]
 [dependencies]
 rand_core = { version = "0.6.4", features = ["getrandom"] }
 serde = { version = "1", features = ["derive"], optional=true }
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "seed_and_run"
+harness = false

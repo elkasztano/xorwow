@@ -116,7 +116,7 @@ make_xorwow!(
 macro_rules! impl_xorwow {
     ($name: ident, $mod: ident, $nr: expr) => {
         impl $name {
-            
+           
             fn clock(&mut self) {
                 let mut x = self.s[$nr - 2];
 
