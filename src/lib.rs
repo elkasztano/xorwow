@@ -6,7 +6,7 @@
 //! # Example
 //! ```
 //! use rand_core::{SeedableRng, RngCore};
-//! use xorwow::Xorwow160;
+//! use xorwowgen::Xorwow160;
 //!
 //! // initialize the generator
 //! let mut rng = Xorwow160::seed_from_u64(1234);
@@ -52,7 +52,7 @@ make_xorwow!(
 /// # Example
 /// ```
 /// use rand_core::{SeedableRng, RngCore};
-/// use xorwow::Xorwow128;
+/// use xorwowgen::Xorwow128;
 ///
 /// let mut rng = Xorwow128::seed_from_u64(4321);
 /// 
@@ -69,7 +69,7 @@ make_xorwow!(
 /// # Example
 /// ```
 /// use rand_core::{SeedableRng, RngCore};
-/// use xorwow::Xorwow160;
+/// use xorwowgen::Xorwow160;
 ///
 /// let mut rng = Xorwow160::seed_from_u64(4321);
 /// 
@@ -86,7 +86,7 @@ make_xorwow!(
 /// # Example
 /// ```
 /// use rand_core::{SeedableRng, RngCore};
-/// use xorwow::Xorwow192;
+/// use xorwowgen::Xorwow192;
 ///
 /// let mut rng = Xorwow192::seed_from_u64(4321);
 /// for _ in 0..75 { rng.next_u64(); }
@@ -103,7 +103,7 @@ make_xorwow!(
 /// # Example
 /// ```
 /// use rand_core::{SeedableRng, RngCore};
-/// use xorwow::XorwowXor160;
+/// use xorwowgen::XorwowXor160;
 ///
 /// let mut rng = XorwowXor160::seed_from_u64(4321);
 ///

@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use xorwow::*;
+use xorwowgen::*;
 use rand_core::{SeedableRng, RngCore};
 
 macro_rules! create_bench {

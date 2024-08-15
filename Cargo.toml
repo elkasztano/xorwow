@@ -1,12 +1,12 @@
 [package]
-name = "xorwow"
+name = "xorwowgen"
 version = "0.1.0"
 edition = "2021"
 authors = ["El Kasztano"]
-description = "several implementations of the Xorwow algorithm"
+description = "Several implementations of the Xorwow algorithm"
 repository = "https://github.com/elkasztano/xorwow"
 license = "MIT"
-keywords = ["xorwow", "pseudorandom", "PRNG"]
+keywords = ["xorwow", "pseudorandom", "PRNG", "generator"]
 categories = ["algorithms", "mathematics"]
 
 [features]

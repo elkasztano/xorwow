@@ -1,4 +1,4 @@
-# Xorwow
+# Xorwow Generators
 
 Several implementations of the Xorwow generator as proposed here:
 
@@ -10,7 +10,7 @@ Implements the `SeedableRng` and `RngCore` traits from [`rand_core`](https://doc
 
 ```rust
 use rand_core::{SeedableRng, RngCore}; // version = "0.6.4"
-use xorwow::Xorwow160;
+use xorwowgen::Xorwow160;
 
 fn main() {
 
@@ -18,11 +18,14 @@ fn main() {
     let mut rng = Xorwow160::seed_from_u64(123456789);
 
     // clock it a few times
-    (0..100).for_each(|_| { rng.next_u32(); });
+    for _ in 0..100 {
+        rng.next_u32();
+    }
 
     // generate a few numbers
-    (0..10).for_each(|_| { println!("{}", rng.next_u32()); });
-
+    for _ in 0..10 {
+        println!("{}", rng.next_u32());
+    }
 }
 ```
 ## Notes
