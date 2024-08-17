@@ -3,27 +3,31 @@ use xorwowgen::*;
 use rand_core::{SeedableRng, RngCore};
 
 macro_rules! create_bench {
-    ($name:ident, $subj:ident, $n:expr) => {
+    ($name:ident, $subj:ident) => {
         fn $name() {
             let mut rng = $subj::seed_from_u64(987654321);
-            for _ in 0..$n {
+            for _ in 0..0x20_000 {
                 rng.next_u64();
             }
         }
     }
 }
 
-create_bench!(run128, Xorwow128, 10_000_000);
-create_bench!(run160, Xorwow160, 10_000_000);
-create_bench!(run192, Xorwow192, 10_000_000);
-create_bench!(run160xor, XorwowXor160, 10_000_000);
+create_bench!(run96, Xorwow96);
+create_bench!(run128, Xorwow128);
+create_bench!(run160, Xorwow160);
+create_bench!(run96xor, XorwowXor96);
+create_bench!(run128xor, XorwowXor128);
+create_bench!(run160xor, XorwowXor160);
 
 fn seed_and_run(c: &mut Criterion) {
     let mut group = c.benchmark_group("basic-config");
-    group.sample_size(10);
+    group.sample_size(100);
+    group.bench_function("run96", |b| b.iter(|| run96()));
     group.bench_function("run128", |b| b.iter(|| run128()));
     group.bench_function("run160", |b| b.iter(|| run160()));
-    group.bench_function("run192", |b| b.iter(|| run192()));
+    group.bench_function("run96xor", |b| b.iter(|| run96xor()));
+    group.bench_function("run128xor", |b| b.iter(|| run128xor()));
     group.bench_function("run160xor", |b| b.iter(|| run160xor()));
     group.finish();
 }

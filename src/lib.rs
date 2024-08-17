@@ -2,6 +2,8 @@
 //! [http://www.jstatsoft.org/v08/i14/paper](http://www.jstatsoft.org/v08/i14/paper).
 //! The last element of the underlying `u32` array is used as
 //! the counter for the so-called Weyl sequence.
+//! `xorwowgen::Xorwow160` comes closest to the 'xorwow' function described
+//! in the paper. All other implementations are derivative.
 //!
 //! # Example
 //! ```
@@ -46,6 +48,23 @@ macro_rules! make_xorwow {
 }
 
 make_xorwow!(
+/// Xorwow implementation with __96__ bits of state
+/// plus 32 bits for the modulo 2^32 counter.
+///
+/// # Example
+/// ```
+/// use rand_core::{SeedableRng, RngCore};
+/// use xorwowgen::Xorwow96;
+///
+/// let mut rng = Xorwow96::seed_from_u64(4321);
+/// 
+/// for _ in 0..100 { rng.next_u32(); }
+///
+/// assert_eq!(4911005502369895850, rng.next_u64());
+/// ```
+    Xorwow96, 4);
+
+make_xorwow!(
 /// Xorwow implementation with __128__ bits of state
 /// plus 32 bits for the modulo 2^32 counter.
 ///
@@ -58,7 +77,7 @@ make_xorwow!(
 /// 
 /// for _ in 0..100 { rng.next_u32(); }
 ///
-/// assert_eq!(14427707399123623584, rng.next_u64());
+/// assert_eq!(4097996158316656424, rng.next_u64());
 /// ```
     Xorwow128, 5);
 
@@ -80,24 +99,47 @@ make_xorwow!(
     Xorwow160, 6);
 
 make_xorwow!(
-/// Xorwow implementation with __192__ bits of state
-/// plus 32 bits for the modulo 2^32 counter.
+/// Xorwow implementation with a footprint of __96__ bits
+/// plus 32 bits of counter.
+/// Uses _bitxor_ instead of _wrapping_add_ for
+/// combining the regular Xorshift with the Weyl sequence.
 ///
 /// # Example
 /// ```
 /// use rand_core::{SeedableRng, RngCore};
-/// use xorwowgen::Xorwow192;
+/// use xorwowgen::XorwowXor96;
 ///
-/// let mut rng = Xorwow192::seed_from_u64(4321);
-/// for _ in 0..75 { rng.next_u64(); }
+/// let mut rng = XorwowXor96::seed_from_u64(4321);
 ///
-/// assert_eq!(10008657423901017482, rng.next_u64());
+/// for _ in 0..50 { rng.next_u32(); }
+///
+/// assert_eq!(1471510243, rng.next_u32());
 /// ```
-    Xorwow192, 7);
+    XorwowXor96, 4);
+
+make_xorwow!(
+/// Xorwow implementation with a footprint of __128__ bits
+/// plus 32 bits of counter.
+/// Uses _bitxor_ instead of _wrapping_add_ for
+/// combining the regular Xorshift with the Weyl sequence.
+///
+/// # Example
+/// ```
+/// use rand_core::{SeedableRng, RngCore};
+/// use xorwowgen::XorwowXor128;
+///
+/// let mut rng = XorwowXor128::seed_from_u64(4321);
+///
+/// for _ in 0..50 { rng.next_u32(); }
+///
+/// assert_eq!(2515325973, rng.next_u32());
+/// ```
+    XorwowXor128, 5);
 
 make_xorwow!(
 /// Xorwow implementation with a footprint of __160__ bits
-/// plus 32 bits. Uses _bitxor_ instead of _wrapping_add_ for
+/// plus 32 bits of counter.
+/// Uses _bitxor_ instead of _wrapping_add_ for
 /// combining the regular Xorshift with the Weyl sequence.
 ///
 /// # Example
@@ -114,7 +156,7 @@ make_xorwow!(
     XorwowXor160, 6);
 
 macro_rules! impl_xorwow {
-    ($name: ident, $mod: ident, $nr: expr) => {
+    ($name: ident, $mod: ident, $nr: expr, $shift: expr) => {
         impl $name {
            
             fn clock(&mut self) {
@@ -127,10 +169,10 @@ macro_rules! impl_xorwow {
                 }
 
                 self.s[1] = y;
-
-                x ^= x >> 2;
-                x ^= x << 1;
-                x ^= y ^ (y << 4);
+                
+                x ^= x >> $shift.0;
+                x ^= x << $shift.1;
+                x ^= y ^ (y << $shift.2);
 
                 self.s[0] = x;
 
@@ -163,10 +205,12 @@ macro_rules! impl_xorwow {
     };
 }
 
-impl_xorwow!(Xorwow128, wrapping_add, 5);
-impl_xorwow!(Xorwow160, wrapping_add, 6);
-impl_xorwow!(Xorwow192, wrapping_add, 7);
-impl_xorwow!(XorwowXor160, bitxor, 6);
+impl_xorwow!(Xorwow96, wrapping_add, 4, (10, 5, 26));
+impl_xorwow!(Xorwow128, wrapping_add, 5, (5, 14, 1));
+impl_xorwow!(Xorwow160, wrapping_add, 6, (2, 1, 4));
+impl_xorwow!(XorwowXor96, bitxor, 4, (10, 5, 26));
+impl_xorwow!(XorwowXor128, bitxor, 5, (5, 14, 1));
+impl_xorwow!(XorwowXor160, bitxor, 6, (2, 1, 4));
 
 macro_rules! impl_seedable {
     ($name: ident, $nr: expr) => {
@@ -180,7 +224,7 @@ macro_rules! impl_seedable {
 
                 let mut all_zero = true;
 
-                // check if all elements besides the counter are zero
+                // check if all elements except the counter are zero
                 for x in state.iter().take($nr - 1) {
                     if *x != 0 {
                         all_zero = false;
@@ -221,9 +265,11 @@ macro_rules! impl_seedable {
     };
 }
 
+impl_seedable!(Xorwow96, 4);
 impl_seedable!(Xorwow128, 5);
 impl_seedable!(Xorwow160, 6);
-impl_seedable!(Xorwow192, 7);
+impl_seedable!(XorwowXor96, 4);
+impl_seedable!(XorwowXor128, 5);
 impl_seedable!(XorwowXor160, 6);
 
 macro_rules! impl_core {
@@ -249,7 +295,9 @@ macro_rules! impl_core {
     };
 }
 
+impl_core!(Xorwow96);
 impl_core!(Xorwow128);
 impl_core!(Xorwow160);
-impl_core!(Xorwow192);
+impl_core!(XorwowXor96);
+impl_core!(XorwowXor128);
 impl_core!(XorwowXor160);
