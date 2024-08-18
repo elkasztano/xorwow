@@ -27,6 +27,7 @@
 //! Allows (de)serialization of the state array using
 //! [serde](https://serde.rs/).
 
+pub mod xorwow64;
 use rand_core::impls::fill_bytes_via_next;
 use rand_core::le::read_u32_into;
 use rand_core::{Error, RngCore, SeedableRng};
@@ -39,7 +40,7 @@ macro_rules! make_xorwow {
     ($(#[$meta:meta])*
      $name: ident, $nr: expr) => (
         $(#[$meta])*
-        #[derive(Debug, Default, Clone, Eq, PartialEq)]
+        #[derive(Debug, Clone, Eq, PartialEq)]
         #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
         pub struct $name {
             s: [u32; $nr]
@@ -222,21 +223,10 @@ macro_rules! impl_seedable {
 
                 read_u32_into(&seed, &mut state);
 
-                let mut all_zero = true;
-
                 // check if all elements except the counter are zero
-                for x in state.iter().take($nr - 1) {
-                    if *x != 0 {
-                        all_zero = false;
-                        break;
-                    }
-                }
-
-                // u32::MAX is used as an alternative seed
-                if all_zero {
-                    for x in state.iter_mut().take($nr - 1) {
-                        *x = u32::MAX;
-                    }
+                // and use u32::MAX as an alternative seed
+                if state[0..($nr - 1)] == [0u32; $nr - 1] {
+                    for i in 0..($nr - 1) { state[i] = u32::MAX; }
                 }
 
                 Self { s: state }
@@ -294,6 +284,8 @@ macro_rules! impl_core {
         }
     };
 }
+
+pub(crate) use impl_core;
 
 impl_core!(Xorwow96);
 impl_core!(Xorwow128);
