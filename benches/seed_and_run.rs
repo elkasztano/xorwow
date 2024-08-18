@@ -3,22 +3,22 @@ use xorwowgen::*;
 use rand_core::{SeedableRng, RngCore};
 
 macro_rules! create_bench {
-    ($name:ident, $subj:ident) => {
+    ($name:ident, $subj:ident, $n:expr) => {
         fn $name() {
             let mut rng = $subj::seed_from_u64(987654321);
-            for _ in 0..0x20_000 {
+            for _ in 0..$n {
                 rng.next_u64();
             }
         }
     }
 }
 
-create_bench!(run96, Xorwow96);
-create_bench!(run128, Xorwow128);
-create_bench!(run160, Xorwow160);
-create_bench!(run96xor, XorwowXor96);
-create_bench!(run128xor, XorwowXor128);
-create_bench!(run160xor, XorwowXor160);
+create_bench!(run96, Xorwow96, 0x20000);
+create_bench!(run128, Xorwow128, 0x20000);
+create_bench!(run160, Xorwow160, 0x20000);
+create_bench!(run96xor, XorwowXor96, 0x20000);
+create_bench!(run128xor, XorwowXor128, 0x20000);
+create_bench!(run160xor, XorwowXor160, 0x20000);
 
 fn seed_and_run(c: &mut Criterion) {
     let mut group = c.benchmark_group("basic-config");
