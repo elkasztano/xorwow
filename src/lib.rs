@@ -28,6 +28,7 @@
 //! [serde](https://serde.rs/).
 
 pub mod xorwow64;
+pub mod xorwow128;
 use rand_core::impls::fill_bytes_via_next;
 use rand_core::le::read_u32_into;
 use rand_core::{Error, RngCore, SeedableRng};

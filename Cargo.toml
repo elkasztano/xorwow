@@ -1,6 +1,6 @@
 [package]
 name = "xorwowgen"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 authors = ["El Kasztano"]
 description = "Several implementations of the Xorwow algorithm"
@@ -25,4 +25,8 @@ harness = false
 
 [[bench]]
 name = "seed_and_run_64"
+harness = false
+
+[[bench]]
+name = "seed_and_run_128"
 harness = false
